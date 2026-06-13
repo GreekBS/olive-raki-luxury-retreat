@@ -95,14 +95,9 @@ export function Hero() {
           Boutique Villa · Crete, Greece
         </motion.p>
 
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="max-w-4xl font-serif text-4xl font-light leading-tight text-white sm:text-5xl md:text-6xl lg:text-7xl"
-        >
+        <h1 className="max-w-4xl font-serif text-4xl font-light leading-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
           Your Peaceful Retreat in Crete
-        </motion.h1>
+        </h1>
 
         <motion.p
           initial={{ opacity: 0, y: 20 }}
