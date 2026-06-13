@@ -52,7 +52,7 @@ export function Restaurants() {
                   <p className="mt-4 flex-1 text-sm leading-relaxed text-sand-600">
                     {restaurant.description}
                   </p>
-                  <span className="mt-5 inline-block text-xs font-medium uppercase tracking-[0.15em] text-terracotta-500 transition-colors group-hover:text-terracotta-600">
+                  <span className="mt-5 inline-flex min-h-[44px] items-center py-3 text-xs font-medium uppercase tracking-[0.15em] text-terracotta-500 transition-colors group-hover:text-terracotta-600">
                     View on Google Maps →
                   </span>
                 </div>

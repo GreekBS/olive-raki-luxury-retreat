@@ -1,4 +1,8 @@
 import { propertyLocation } from "@/data/location";
+import {
+  whatsappBookingUrl,
+  whatsappPhoneDisplay,
+} from "@/lib/contact";
 
 const socialLinks = [
   { name: "Instagram", href: "#", icon: "M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" },
@@ -26,7 +30,7 @@ export function Footer() {
               <li>
                 <a
                   href="mailto:vaggelis.stefan1@gmail.com"
-                  className="transition-colors hover:text-sand-50"
+                  className="inline-flex min-h-[44px] items-center py-2 transition-colors hover:text-sand-50"
                 >
                   vaggelis.stefan1@gmail.com
                 </a>
@@ -34,9 +38,19 @@ export function Footer() {
               <li>
                 <a
                   href="tel:+306948386235"
-                  className="transition-colors hover:text-sand-50"
+                  className="inline-flex min-h-[44px] items-center py-2 transition-colors hover:text-sand-50"
                 >
-                  +30 694 838 6235
+                  {whatsappPhoneDisplay}
+                </a>
+              </li>
+              <li>
+                <a
+                  href={whatsappBookingUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex min-h-[44px] items-center py-2 transition-colors hover:text-sand-50"
+                >
+                  WhatsApp
                 </a>
               </li>
             </ul>
@@ -69,7 +83,7 @@ export function Footer() {
                   key={social.name}
                   href={social.href}
                   aria-label={social.name}
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-sand-700 text-sand-400 transition-colors hover:border-sand-500 hover:text-sand-50"
+                  className="flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-sand-700 text-sand-400 transition-colors hover:border-sand-500 hover:text-sand-50"
                 >
                   <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
                     <path d={social.icon} />

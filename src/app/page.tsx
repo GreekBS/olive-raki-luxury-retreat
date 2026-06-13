@@ -17,7 +17,7 @@ export default function Home() {
     <>
       <StructuredData />
       <Header />
-      <main>
+      <main id="main-content">
         <Hero />
         <About />
         <Experience />

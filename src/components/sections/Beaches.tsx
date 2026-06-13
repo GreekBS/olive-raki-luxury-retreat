@@ -48,7 +48,7 @@ export function Beaches() {
                     href={beach.mapsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-5 inline-block text-xs font-medium uppercase tracking-[0.15em] text-terracotta-500 transition-colors hover:text-terracotta-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sand-400 focus-visible:ring-offset-2"
+                    className="mt-5 inline-flex min-h-[44px] items-center py-3 text-xs font-medium uppercase tracking-[0.15em] text-terracotta-500 transition-colors hover:text-terracotta-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sand-400 focus-visible:ring-offset-2"
                   >
                     View on Google Maps →
                   </a>

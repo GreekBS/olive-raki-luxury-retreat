@@ -1,5 +1,6 @@
 "use client";
 
+import { whatsappBookingUrl } from "@/lib/contact";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
@@ -31,6 +32,13 @@ export function Header() {
           : "bg-transparent py-5"
       )}
     >
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:bg-sand-50 focus:px-4 focus:py-2 focus:text-sand-900 focus:outline-none focus:ring-2 focus:ring-sand-400"
+      >
+        Skip to content
+      </a>
+
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 lg:px-8">
         <a
           href="#"
@@ -70,23 +78,40 @@ export function Header() {
           Book Now
         </a>
 
-        <button
-          className={cn(
-            "flex h-10 w-10 items-center justify-center md:hidden",
-            scrolled ? "text-sand-900" : "text-white"
-          )}
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label={menuOpen ? "Close menu" : "Open menu"}
-          aria-expanded={menuOpen}
-        >
-          <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            {menuOpen ? (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
-            ) : (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 12h16M4 18h16" />
+        <div className="flex items-center gap-2 md:hidden">
+          <a
+            href={whatsappBookingUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={cn(
+              "inline-flex min-h-[44px] items-center border px-3 text-xs font-medium uppercase tracking-[0.2em] transition-colors",
+              scrolled
+                ? "border-sand-900 text-sand-900 hover:bg-sand-900 hover:text-sand-50"
+                : "border-white/40 text-white hover:bg-white/10"
             )}
-          </svg>
-        </button>
+          >
+            Book Now
+          </a>
+
+          <button
+            type="button"
+            className={cn(
+              "flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center",
+              scrolled ? "text-sand-900" : "text-white"
+            )}
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={menuOpen}
+          >
+            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              {menuOpen ? (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 12h16M4 18h16" />
+              )}
+            </svg>
+          </button>
+        </div>
       </div>
 
       <AnimatePresence>

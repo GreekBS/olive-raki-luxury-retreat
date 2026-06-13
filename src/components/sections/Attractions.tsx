@@ -17,7 +17,7 @@ export function Attractions() {
         <div className="grid gap-8 md:grid-cols-2">
           {attractions.map((attraction, i) => (
             <AnimatedSection key={attraction.name} delay={i * 0.05}>
-              <article className="flex gap-6 border-l-2 border-terracotta-400 pl-6">
+              <article className="flex flex-col gap-4 border-l-2 border-terracotta-400 pl-6 md:flex-row md:gap-6">
                 <div className="flex-1">
                   <h3 className="font-serif text-xl text-sand-900 md:text-2xl">
                     {attraction.name}
@@ -26,7 +26,7 @@ export function Attractions() {
                     {attraction.description}
                   </p>
                 </div>
-                <div className="shrink-0 text-right">
+                <div className="shrink-0 text-left md:text-right">
                   <p className="font-serif text-2xl text-sand-900">
                     {attraction.driveTime}
                   </p>

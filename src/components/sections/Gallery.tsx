@@ -11,11 +11,15 @@ import { Button } from "@/components/ui/Button";
 import { Lightbox } from "@/components/ui/Lightbox";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { cn } from "@/lib/utils";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import { useMemo, useRef, useState } from "react";
 
 const INITIAL_VISIBLE_COUNT = 12;
+const GALLERY_TABPANEL_ID = "gallery-tabpanel";
+
+const tabButtonClass =
+  "px-4 py-3 min-h-[44px] text-xs font-medium uppercase tracking-[0.15em] transition-colors";
 
 export function Gallery() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -25,6 +29,7 @@ export function Gallery() {
   const [showAllPhotos, setShowAllPhotos] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const shouldReduceMotion = useReducedMotion();
 
   const filteredImages = useMemo(
     () => getImagesByCategory(activeCategory),
@@ -50,7 +55,10 @@ export function Gallery() {
     if (showAllPhotos) {
       setShowAllPhotos(false);
       requestAnimationFrame(() => {
-        sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        sectionRef.current?.scrollIntoView({
+          behavior: shouldReduceMotion ? "auto" : "smooth",
+          block: "start",
+        });
       });
     } else {
       setShowAllPhotos(true);
@@ -61,6 +69,9 @@ export function Gallery() {
     setLightboxIndex(index);
     setLightboxOpen(true);
   };
+
+  const activeTabId =
+    activeCategory === "all" ? "gallery-tab-all" : `gallery-tab-${activeCategory}`;
 
   return (
     <section
@@ -84,11 +95,13 @@ export function Gallery() {
             aria-label="Gallery categories"
           >
             <button
+              id="gallery-tab-all"
               role="tab"
               aria-selected={activeCategory === "all"}
+              aria-controls={GALLERY_TABPANEL_ID}
               onClick={() => handleCategoryChange("all")}
               className={cn(
-                "px-4 py-2 text-xs font-medium uppercase tracking-[0.15em] transition-colors",
+                tabButtonClass,
                 activeCategory === "all"
                   ? "bg-sand-900 text-sand-50"
                   : "bg-sand-100 text-sand-600 hover:bg-sand-200"
@@ -99,11 +112,13 @@ export function Gallery() {
             {galleryCategories.map((cat) => (
               <button
                 key={cat.id}
+                id={`gallery-tab-${cat.id}`}
                 role="tab"
                 aria-selected={activeCategory === cat.id}
+                aria-controls={GALLERY_TABPANEL_ID}
                 onClick={() => handleCategoryChange(cat.id)}
                 className={cn(
-                  "px-4 py-2 text-xs font-medium uppercase tracking-[0.15em] transition-colors",
+                  tabButtonClass,
                   activeCategory === cat.id
                     ? "bg-sand-900 text-sand-50"
                     : "bg-sand-100 text-sand-600 hover:bg-sand-200"
@@ -115,7 +130,12 @@ export function Gallery() {
           </div>
         </AnimatedSection>
 
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
+        <div
+          id={GALLERY_TABPANEL_ID}
+          role="tabpanel"
+          aria-labelledby={activeTabId}
+          className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4"
+        >
           <AnimatePresence initial={false}>
             {displayImages.map((image, index) => {
               const globalIndex = propertyImages.findIndex(
@@ -125,12 +145,15 @@ export function Gallery() {
                 <motion.button
                   key={image.src}
                   layout
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
+                  exit={{ opacity: 0, y: shouldReduceMotion ? 0 : -10 }}
                   transition={{
-                    duration: 0.4,
-                    delay: index >= INITIAL_VISIBLE_COUNT ? (index - INITIAL_VISIBLE_COUNT) * 0.03 : 0,
+                    duration: shouldReduceMotion ? 0 : 0.4,
+                    delay:
+                      shouldReduceMotion || index < INITIAL_VISIBLE_COUNT
+                        ? 0
+                        : (index - INITIAL_VISIBLE_COUNT) * 0.03,
                     ease: [0.22, 1, 0.36, 1],
                   }}
                   onClick={() => openLightbox(globalIndex)}
@@ -158,7 +181,7 @@ export function Gallery() {
                       loading="lazy"
                     />
                     <div className="absolute inset-0 bg-sand-900/0 transition-colors duration-300 group-hover:bg-sand-900/20" />
-                    <div className="absolute bottom-0 left-0 right-0 translate-y-full bg-gradient-to-t from-sand-900/60 to-transparent p-4 transition-transform duration-300 group-hover:translate-y-0">
+                    <div className="absolute bottom-0 left-0 right-0 translate-y-0 bg-gradient-to-t from-sand-900/60 to-transparent p-4 transition-transform duration-300 md:translate-y-full md:group-hover:translate-y-0">
                       <p className="text-left text-xs text-white/90 line-clamp-2">
                         {image.alt}
                       </p>
