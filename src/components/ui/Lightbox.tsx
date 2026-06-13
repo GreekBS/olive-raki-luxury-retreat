@@ -92,12 +92,7 @@ export function Lightbox({
             </svg>
           </button>
 
-          <motion.div
-            key={currentIndex}
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.3 }}
+          <div
             className="relative mx-16 h-[70vh] w-full max-w-6xl md:mx-24"
             onClick={(e) => e.stopPropagation()}
           >
@@ -109,7 +104,7 @@ export function Lightbox({
               sizes="100vw"
               priority
             />
-          </motion.div>
+          </div>
 
           <p
             className={cn(
