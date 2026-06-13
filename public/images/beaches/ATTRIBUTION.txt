@@ -1,0 +1,46 @@
+Beach Image Attributions
+========================
+Images optimized for web use on the Olive & Raki Luxury Retreat website.
+CC BY-SA licensed images require attribution and ShareAlike notice.
+
+Beach: Agia Pelagia Beach
+File: agia-pelagia.jpg
+Author: Ontheway Advice
+License: CC0 1.0 (Public Domain Dedication)
+Source: https://commons.wikimedia.org/wiki/File:Agia_Pelagia_(33523263423).jpg
+
+Beach: Ligaria Beach
+File: ligaria.jpg
+Author: Dkoukoul
+License: CC BY-SA 4.0
+Source: https://commons.wikimedia.org/wiki/File:Ligaria.jpg
+
+Beach: Psaromoura Beach
+File: psaromoura.jpg
+Author: MARKELLOS
+License: CC0 1.0 (Public Domain Dedication)
+Source: https://commons.wikimedia.org/wiki/File:Psaromoura_beach,_Heraklion,_Crete,_Greece.jpg
+
+Beach: Mononaftis Beach
+File: mononaftis.jpg
+Author: logopop (Kristian A. Bognaes)
+License: CC BY-SA 3.0
+Source: https://commons.wikimedia.org/wiki/File:Mononaftis_715_00,_Greece_-_panoramio.jpg
+
+Beach: Matala Beach
+File: matala.jpg
+Author: Helentr
+License: CC BY-SA 3.0
+Source: https://commons.wikimedia.org/wiki/File:MatalaBeachCaves.jpg
+
+Beach: Voulisma Beach
+File: voulisma.jpg
+Author: ArtemiyPavlov
+License: CC BY-SA 3.0
+Source: https://commons.wikimedia.org/wiki/File:Voulisma_Beach,_Istro,_Crete.JPG
+
+Beach: Bali Beach
+File: bali.jpg
+Author: Pjotr Mahhonin
+License: CC BY-SA 4.0
+Source: https://commons.wikimedia.org/wiki/File:Vlihi_Nero_Beach_or_1st_Beach_Bali_Crete_22_September_2017.jpg

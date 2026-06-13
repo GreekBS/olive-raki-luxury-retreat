@@ -1,0 +1,68 @@
+@import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
+
+@theme {
+  --color-sand-50: #faf8f5;
+  --color-sand-100: #f3efe8;
+  --color-sand-200: #e8e0d4;
+  --color-sand-300: #d4c8b8;
+  --color-sand-400: #b8a690;
+  --color-sand-500: #9a8570;
+  --color-sand-600: #7d6a58;
+  --color-sand-700: #655546;
+  --color-sand-800: #524539;
+  --color-sand-900: #443a31;
+
+  --color-terracotta-400: #c4785a;
+  --color-terracotta-500: #b5654a;
+  --color-terracotta-600: #9a5240;
+
+  --color-olive-400: #8a9a6e;
+  --color-olive-500: #6b7a52;
+  --color-olive-600: #556340;
+
+  --color-aegean-400: #5b9aaa;
+  --color-aegean-500: #4a8494;
+  --color-aegean-600: #3d6d7a;
+
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+  --font-sans: "DM Sans", system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-sand-50);
+  color: var(--color-sand-900);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background-color: var(--color-sand-300);
+  color: var(--color-sand-900);
+}
+
+.leaflet-container {
+  font-family: var(--font-sans);
+  z-index: 0;
+}
+
+.masonry-item-wide {
+  grid-column: span 2;
+}
+
+.masonry-item-tall {
+  grid-row: span 2;
+}
+
+@media (max-width: 768px) {
+  .masonry-item-wide,
+  .masonry-item-tall {
+    grid-column: span 1;
+    grid-row: span 1;
+  }
+}
