@@ -1,6 +1,5 @@
 "use client";
 
-import { whatsappBookingUrl } from "@/lib/contact";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState, type MouseEvent } from "react";
@@ -109,9 +108,8 @@ export function Header() {
 
         <div className="flex items-center gap-2 md:hidden">
           <a
-            href={whatsappBookingUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+            href="#book"
+            onClick={(event) => handleMobileNavClick(event, "#book")}
             className={cn(
               "inline-flex min-h-[44px] items-center border px-3 text-xs font-medium uppercase tracking-[0.2em] transition-colors",
               scrolled
