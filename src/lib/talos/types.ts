@@ -65,6 +65,30 @@ export interface StayRequest {
   guestCount: number;
 }
 
+export interface CalendarRequest {
+  from: string;
+  to: string;
+  guestCount: number;
+}
+
+export interface DirectBookingCalendarDay {
+  date: string;
+  available: boolean;
+  nightlyPrice: string | null;
+  currency: string;
+  checkInAllowed: boolean;
+  checkOutAllowed: boolean;
+}
+
+export interface DirectBookingCalendar {
+  currency: string;
+  timezone: string;
+  minNights: number;
+  maxNights: number;
+  maxGuests: number;
+  days: DirectBookingCalendarDay[];
+}
+
 export interface TalosEnvelope<T> {
   data: T | null;
   error: { code: string; message: string } | null;

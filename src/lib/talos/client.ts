@@ -1,7 +1,9 @@
 import "server-only";
 
 import type {
+  CalendarRequest,
   DirectBookingAvailability,
+  DirectBookingCalendar,
   DirectBookingPublicConfig,
   DirectBookingQuote,
   StayRequest,
@@ -119,5 +121,14 @@ export async function quoteDirectBookingStay(
   return talosFetch<DirectBookingQuote>("/api/direct-booking/v1/quote", {
     method: "POST",
     body: stay,
+  });
+}
+
+export async function fetchDirectBookingCalendar(
+  request: CalendarRequest
+): Promise<DirectBookingCalendar> {
+  return talosFetch<DirectBookingCalendar>("/api/direct-booking/v1/calendar", {
+    method: "POST",
+    body: request,
   });
 }

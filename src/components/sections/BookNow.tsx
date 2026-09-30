@@ -1,11 +1,15 @@
 "use client";
 
-import { whatsappBookingUrl } from "@/lib/contact";
+import {
+  BookingCalendar,
+  type BookingCalendarSelection,
+} from "@/components/booking/BookingCalendar";
 import { Button } from "@/components/ui/Button";
+import { whatsappBookingUrl } from "@/lib/contact";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
 type UiState =
   | "initial"
@@ -62,14 +66,6 @@ function formatDisplayDate(iso: string) {
   }).format(date);
 }
 
-function todayIso() {
-  const now = new Date();
-  const y = now.getFullYear();
-  const m = String(now.getMonth() + 1).padStart(2, "0");
-  const d = String(now.getDate()).padStart(2, "0");
-  return `${y}-${m}-${d}`;
-}
-
 const fieldClass =
   "w-full border border-white/20 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/40 outline-none transition-colors focus:border-terracotta-400 focus:ring-1 focus:ring-terracotta-400/40 [color-scheme:dark]";
 
@@ -79,14 +75,19 @@ const labelClass =
 export function BookNow() {
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
+  const [selectionValid, setSelectionValid] = useState(false);
   const [guests, setGuests] = useState(2);
   const [config, setConfig] = useState<BookingConfig | null>(null);
   const [state, setState] = useState<UiState>("initial");
   const [message, setMessage] = useState<string | null>(null);
+  const [calendarHint, setCalendarHint] = useState<string | null>(null);
   const [quote, setQuote] = useState<QuoteResult | null>(null);
+  const [calendarRefresh, setCalendarRefresh] = useState(0);
 
   const maxGuests = config?.maxGuests ?? 8;
-  const minDate = useMemo(() => todayIso(), []);
+  const bookingDisabled = state === "not_ready";
+  const minNights = config?.stayRules?.minNights ?? 1;
+  const maxNights = config?.stayRules?.maxNights ?? 30;
 
   useEffect(() => {
     let cancelled = false;
@@ -132,20 +133,30 @@ export function BookNow() {
     };
   }, []);
 
+  function handleSelectionChange(selection: BookingCalendarSelection) {
+    setCheckIn(selection.checkIn ?? "");
+    setCheckOut(selection.checkOut ?? "");
+    setSelectionValid(selection.valid);
+    setQuote(null);
+    setMessage(null);
+    if (state === "quote" || state === "unavailable" || state === "invalid") {
+      setState("initial");
+    }
+  }
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setQuote(null);
     setMessage(null);
 
-    if (!checkIn || !checkOut) {
+    if (!checkIn || !checkOut || !selectionValid) {
       setState("invalid");
-      setMessage("Please select check-in and check-out dates.");
-      return;
-    }
-
-    if (checkOut <= checkIn) {
-      setState("invalid");
-      setMessage("Check-out must be after check-in.");
+      setMessage(
+        calendarHint ??
+          (checkIn && checkOut
+            ? `Minimum stay: ${minNights} nights`
+            : "Please select check-in and check-out dates on the calendar.")
+      );
       return;
     }
 
@@ -165,12 +176,11 @@ export function BookNow() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(stay),
       });
-      const availabilityJson =
-        (await availabilityRes.json()) as ApiEnvelope<{
-          available: boolean;
-          nights: number;
-          currency: string;
-        }>;
+      const availabilityJson = (await availabilityRes.json()) as ApiEnvelope<{
+        available: boolean;
+        nights: number;
+        currency: string;
+      }>;
 
       if (
         availabilityRes.status === 403 ||
@@ -192,6 +202,7 @@ export function BookNow() {
             availabilityJson.error.message ||
               "Those dates are not available. Please try different dates."
           );
+          setCalendarRefresh((n) => n + 1);
           return;
         }
         if (availabilityJson.error?.code === "VALIDATION_ERROR") {
@@ -212,6 +223,7 @@ export function BookNow() {
         setMessage(
           "Those dates are not available. Please try different dates, or ask us on WhatsApp."
         );
+        setCalendarRefresh((n) => n + 1);
         return;
       }
 
@@ -242,6 +254,7 @@ export function BookNow() {
             quoteJson.error.message ||
               "Those dates are not available. Please try different dates."
           );
+          setCalendarRefresh((n) => n + 1);
           return;
         }
         if (quoteJson.error?.code === "VALIDATION_ERROR") {
@@ -267,8 +280,6 @@ export function BookNow() {
     }
   }
 
-  const bookingDisabled = state === "not_ready";
-
   return (
     <section
       id="book"
@@ -287,7 +298,7 @@ export function BookNow() {
         <div className="absolute inset-0 bg-sand-900/70" />
       </div>
 
-      <div className="relative mx-auto max-w-3xl px-6 text-center lg:px-8">
+      <div className="relative mx-auto max-w-5xl px-6 text-center lg:px-8">
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -325,48 +336,38 @@ export function BookNow() {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.3 }}
           onSubmit={handleSubmit}
-          className="mx-auto mt-10 max-w-2xl border border-white/15 bg-sand-900/35 p-6 text-left backdrop-blur-md md:p-8"
+          className="mx-auto mt-10 max-w-4xl border border-white/15 bg-sand-900/35 p-6 text-left backdrop-blur-md md:p-8"
         >
-          <div className="grid gap-5 sm:grid-cols-2">
-            <div>
-              <label htmlFor="check-in" className={labelClass}>
-                Check-in
-              </label>
-              <input
-                id="check-in"
-                type="date"
-                required
-                min={minDate}
-                value={checkIn}
-                disabled={bookingDisabled || state === "loading"}
-                onChange={(e) => {
-                  setCheckIn(e.target.value);
-                  setState((s) => (s === "quote" || s === "unavailable" ? "initial" : s));
-                }}
-                className={fieldClass}
-              />
-            </div>
-            <div>
-              <label htmlFor="check-out" className={labelClass}>
-                Check-out
-              </label>
-              <input
-                id="check-out"
-                type="date"
-                required
-                min={checkIn || minDate}
-                value={checkOut}
-                disabled={bookingDisabled || state === "loading"}
-                onChange={(e) => {
-                  setCheckOut(e.target.value);
-                  setState((s) => (s === "quote" || s === "unavailable" ? "initial" : s));
-                }}
-                className={fieldClass}
-              />
-            </div>
+          <div className="mb-6">
+            <p className={labelClass}>Select your stay</p>
+            <BookingCalendar
+              guestCount={guests}
+              disabled={bookingDisabled || state === "loading"}
+              refreshToken={calendarRefresh}
+              fallbackMinNights={minNights}
+              fallbackMaxNights={maxNights}
+              onSelectionChange={handleSelectionChange}
+              onHintChange={setCalendarHint}
+              onRulesChange={(rules) => {
+                setConfig((prev) =>
+                  prev
+                    ? {
+                        ...prev,
+                        maxGuests: rules.maxGuests,
+                        currency: rules.currency,
+                        stayRules: {
+                          minNights: rules.minNights,
+                          maxNights: rules.maxNights,
+                        },
+                      }
+                    : prev
+                );
+                setGuests((g) => Math.min(Math.max(g, 1), rules.maxGuests));
+              }}
+            />
           </div>
 
-          <div className="mt-5">
+          <div>
             <label htmlFor="guests" className={labelClass}>
               Guests
             </label>
@@ -374,7 +375,13 @@ export function BookNow() {
               id="guests"
               value={guests}
               disabled={bookingDisabled || state === "loading"}
-              onChange={(e) => setGuests(Number.parseInt(e.target.value, 10))}
+              onChange={(e) => {
+                setGuests(Number.parseInt(e.target.value, 10));
+                setQuote(null);
+                setState((s) =>
+                  s === "quote" || s === "unavailable" ? "initial" : s
+                );
+              }}
               className={cn(fieldClass, "appearance-none")}
             >
               {Array.from({ length: maxGuests }, (_, i) => i + 1).map((n) => (
@@ -390,7 +397,9 @@ export function BookNow() {
               type="submit"
               variant="secondary"
               size="lg"
-              disabled={bookingDisabled || state === "loading"}
+              disabled={
+                bookingDisabled || state === "loading" || !selectionValid
+              }
               className="w-full sm:w-auto"
             >
               {state === "loading" ? "Checking…" : "Check Availability"}
