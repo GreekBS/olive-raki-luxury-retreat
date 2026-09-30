@@ -331,6 +331,9 @@ export function BookingCalendar({
   }
 
   function shiftMonths(delta: number) {
+    setLoading(true);
+    setError(null);
+    setDaysByDate(new Map());
     setAnchor((prev) => addMonths(prev.year, prev.monthIndex, delta));
   }
 
