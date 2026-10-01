@@ -1,11 +1,15 @@
 import "server-only";
 
 import type {
+  BookRequest,
   CalendarRequest,
   DirectBookingAvailability,
+  DirectBookingBooking,
   DirectBookingCalendar,
+  DirectBookingHold,
   DirectBookingPublicConfig,
   DirectBookingQuote,
+  HoldRequest,
   StayRequest,
   TalosEnvelope,
 } from "./types";
@@ -130,5 +134,39 @@ export async function fetchDirectBookingCalendar(
   return talosFetch<DirectBookingCalendar>("/api/direct-booking/v1/calendar", {
     method: "POST",
     body: request,
+  });
+}
+
+export async function createDirectBookingHold(
+  request: HoldRequest
+): Promise<DirectBookingHold> {
+  return talosFetch<DirectBookingHold>("/api/direct-booking/v1/hold", {
+    method: "POST",
+    body: {
+      checkIn: request.checkIn,
+      checkOut: request.checkOut,
+      guestCount: request.guestCount,
+      idempotencyKey: request.idempotencyKey,
+    },
+  });
+}
+
+export async function createDirectBookingBooking(
+  request: BookRequest
+): Promise<DirectBookingBooking> {
+  return talosFetch<DirectBookingBooking>("/api/direct-booking/v1/book", {
+    method: "POST",
+    body: {
+      holdId: request.holdId,
+      guest: {
+        firstName: request.guest.firstName,
+        lastName: request.guest.lastName,
+        email: request.guest.email,
+        phone: request.guest.phone,
+        country: request.guest.country,
+      },
+      acceptedTerms: request.acceptedTerms,
+      idempotencyKey: request.idempotencyKey,
+    },
   });
 }

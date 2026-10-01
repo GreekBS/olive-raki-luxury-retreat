@@ -33,6 +33,21 @@ const FRIENDLY: Record<string, { code: OliveBookingErrorCode; message: string; s
     message: "Those dates are not available. Please try different dates.",
     status: 400,
   },
+  HOLD_CONFLICT: {
+    code: "HOLD_CONFLICT",
+    message: "Those dates were just reserved by another guest. Please choose different dates.",
+    status: 409,
+  },
+  HOLD_EXPIRED: {
+    code: "HOLD_EXPIRED",
+    message: "Your temporary reservation has expired. Please select your dates again.",
+    status: 409,
+  },
+  IDEMPOTENCY_CONFLICT: {
+    code: "IDEMPOTENCY_CONFLICT",
+    message: "This request could not be completed safely. Please start the reservation again.",
+    status: 409,
+  },
   GUEST_LIMIT: {
     code: "GUEST_LIMIT",
     message: "That guest count is not available for this retreat.",
@@ -40,7 +55,7 @@ const FRIENDLY: Record<string, { code: OliveBookingErrorCode; message: string; s
   },
   VALIDATION_ERROR: {
     code: "VALIDATION_ERROR",
-    message: "Please check your dates and guest count.",
+    message: "Please check your details and try again.",
     status: 400,
   },
   RATE_LIMITED: {
@@ -67,6 +82,24 @@ const FRIENDLY: Record<string, { code: OliveBookingErrorCode; message: string; s
 
 function mapTalosCode(code: string, message: string) {
   const lower = message.toLowerCase();
+  if (
+    code === "HOLD_CONFLICT" ||
+    (code === "CONFLICT" && lower.includes("hold")) ||
+    lower.includes("hold conflict")
+  ) {
+    return FRIENDLY.HOLD_CONFLICT;
+  }
+  if (
+    code === "HOLD_EXPIRED" ||
+    lower.includes("hold expired") ||
+    lower.includes("hold has expired") ||
+    lower.includes("expired hold")
+  ) {
+    return FRIENDLY.HOLD_EXPIRED;
+  }
+  if (code === "IDEMPOTENCY_CONFLICT" || lower.includes("idempotency")) {
+    return FRIENDLY.IDEMPOTENCY_CONFLICT;
+  }
   if (code === "VALIDATION_ERROR" && lower.includes("not available")) {
     return FRIENDLY.UNAVAILABLE;
   }
@@ -78,6 +111,9 @@ function mapTalosCode(code: string, message: string) {
   }
   if (code === "VALIDATION_ERROR" && lower.includes("guest")) {
     return FRIENDLY.GUEST_LIMIT;
+  }
+  if (code === "UNAVAILABLE" || code === "CONFLICT") {
+    return FRIENDLY.UNAVAILABLE;
   }
   return FRIENDLY[code] ?? {
     code: "UPSTREAM_ERROR" as OliveBookingErrorCode,

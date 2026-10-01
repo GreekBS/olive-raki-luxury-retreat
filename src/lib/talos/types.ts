@@ -89,6 +89,61 @@ export interface DirectBookingCalendar {
   days: DirectBookingCalendarDay[];
 }
 
+export interface HoldRequest {
+  checkIn: string;
+  checkOut: string;
+  guestCount: number;
+  idempotencyKey: string;
+}
+
+export interface DirectBookingHold {
+  holdId: string;
+  expiresAt: string;
+  checkIn: string;
+  checkOut: string;
+  nights: number;
+  guestCount: number;
+  currency: string;
+  subtotal: string;
+  total: string;
+  quotedAt?: string;
+}
+
+export interface BookingGuestInput {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  country: string;
+}
+
+export interface BookRequest {
+  holdId: string;
+  guest: BookingGuestInput;
+  acceptedTerms: boolean;
+  idempotencyKey: string;
+}
+
+export interface DirectBookingBooking {
+  bookingId?: string;
+  confirmationCode: string;
+  status?: string;
+  checkIn: string;
+  checkOut: string;
+  nights: number;
+  guestCount: number;
+  currency: string;
+  subtotal?: string;
+  total: string;
+  guest: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone?: string;
+    country?: string;
+  };
+}
+
 export interface TalosEnvelope<T> {
   data: T | null;
   error: { code: string; message: string } | null;
@@ -100,6 +155,9 @@ export type OliveBookingErrorCode =
   | "UNAVAILABLE"
   | "NOT_BOOKABLE"
   | "GUEST_LIMIT"
+  | "HOLD_CONFLICT"
+  | "HOLD_EXPIRED"
+  | "IDEMPOTENCY_CONFLICT"
   | "UNAUTHORIZED"
   | "FORBIDDEN"
   | "ORIGIN_NOT_ALLOWED"

@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "node --test scripts/calendar-selection.test.mjs"
+    "test": "node --test scripts/calendar-selection.test.mjs scripts/checkout-booking.test.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",
