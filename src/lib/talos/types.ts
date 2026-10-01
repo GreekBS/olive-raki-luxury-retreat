@@ -101,12 +101,14 @@ export interface DirectBookingHold {
   expiresAt: string;
   checkIn: string;
   checkOut: string;
-  nights: number;
+  nights?: number;
   guestCount: number;
   currency: string;
-  subtotal: string;
+  subtotal?: string;
   total: string;
   quotedAt?: string;
+  quoteId?: string;
+  status?: string;
 }
 
 export interface BookingGuestInput {
@@ -135,10 +137,11 @@ export interface DirectBookingBooking {
   currency: string;
   subtotal?: string;
   total: string;
-  guest: {
-    firstName: string;
-    lastName: string;
-    email: string;
+  guestEmail?: string;
+  guest?: {
+    firstName?: string;
+    lastName?: string;
+    email?: string;
     phone?: string;
     country?: string;
   };

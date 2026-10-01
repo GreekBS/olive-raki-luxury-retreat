@@ -8,6 +8,20 @@ import { parseBookRequest } from "@/lib/talos/validate";
 
 export const dynamic = "force-dynamic";
 
+function nightsBetween(checkIn: string, checkOut: string): number {
+  const start = Date.UTC(
+    Number(checkIn.slice(0, 4)),
+    Number(checkIn.slice(5, 7)) - 1,
+    Number(checkIn.slice(8, 10))
+  );
+  const end = Date.UTC(
+    Number(checkOut.slice(0, 4)),
+    Number(checkOut.slice(5, 7)) - 1,
+    Number(checkOut.slice(8, 10))
+  );
+  return Math.round((end - start) / 86_400_000);
+}
+
 export async function POST(request: Request) {
   try {
     let body: unknown;
@@ -29,18 +43,38 @@ export async function POST(request: Request) {
     // Strict body only — stay/pricing derived by Talos from holdId.
     const booking = await createDirectBookingBooking(parsed.value);
 
+    const confirmationCode = booking.confirmationCode?.trim() || "";
+    const email =
+      booking.guest?.email ||
+      booking.guestEmail ||
+      parsed.value.guest.email;
+    const total = booking.total || "";
+    const currency = booking.currency || "EUR";
+    const nights =
+      typeof booking.nights === "number" && booking.nights > 0
+        ? booking.nights
+        : nightsBetween(booking.checkIn, booking.checkOut);
+
+    if (!confirmationCode || !booking.checkIn || !booking.checkOut || !total) {
+      return oliveBookingError(
+        "UPSTREAM_ERROR",
+        "We could not complete your reservation. Please try again shortly.",
+        502
+      );
+    }
+
     return oliveBookingSuccess({
-      confirmationCode: booking.confirmationCode,
+      confirmationCode,
       checkIn: booking.checkIn,
       checkOut: booking.checkOut,
-      nights: booking.nights,
+      nights,
       guestCount: booking.guestCount,
-      currency: booking.currency,
-      total: booking.total,
+      currency,
+      total,
       guest: {
-        firstName: booking.guest.firstName,
-        lastName: booking.guest.lastName,
-        email: booking.guest.email,
+        firstName: booking.guest?.firstName || parsed.value.guest.firstName,
+        lastName: booking.guest?.lastName || parsed.value.guest.lastName,
+        email,
       },
     });
   } catch (error) {

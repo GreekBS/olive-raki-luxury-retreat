@@ -50,12 +50,29 @@ export async function POST(request: Request) {
       );
     }
 
+    const nights =
+      typeof hold.nights === "number" && hold.nights > 0
+        ? hold.nights
+        : (() => {
+            const start = Date.UTC(
+              Number(hold.checkIn.slice(0, 4)),
+              Number(hold.checkIn.slice(5, 7)) - 1,
+              Number(hold.checkIn.slice(8, 10))
+            );
+            const end = Date.UTC(
+              Number(hold.checkOut.slice(0, 4)),
+              Number(hold.checkOut.slice(5, 7)) - 1,
+              Number(hold.checkOut.slice(8, 10))
+            );
+            return Math.round((end - start) / 86_400_000);
+          })();
+
     return oliveBookingSuccess({
       holdId: hold.holdId,
       expiresAt: hold.expiresAt,
       checkIn: hold.checkIn,
       checkOut: hold.checkOut,
-      nights: hold.nights,
+      nights,
       guestCount: hold.guestCount,
       currency,
       subtotal,

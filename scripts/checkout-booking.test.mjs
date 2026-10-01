@@ -272,3 +272,48 @@ describe("no payment fields", () => {
     approvedBookBody(body);
   });
 });
+
+describe("Talos book response mapping", () => {
+  function mapOliveBooking(booking, requestGuest) {
+    const confirmationCode = booking.confirmationCode?.trim() || "";
+    const email =
+      booking.guest?.email || booking.guestEmail || requestGuest.email;
+    const nights =
+      typeof booking.nights === "number" && booking.nights > 0
+        ? booking.nights
+        : nightsBetween(booking.checkIn, booking.checkOut);
+    return {
+      confirmationCode,
+      nights,
+      total: booking.total,
+      guest: {
+        firstName: booking.guest?.firstName || requestGuest.firstName,
+        lastName: booking.guest?.lastName || requestGuest.lastName,
+        email,
+      },
+    };
+  }
+
+  it("maps guestEmail when nested guest is absent", () => {
+    const mapped = mapOliveBooking(
+      {
+        confirmationCode: "HCP-TEST99",
+        checkIn: "2027-03-22",
+        checkOut: "2027-03-25",
+        guestCount: 2,
+        currency: "EUR",
+        total: "450.0000",
+        guestEmail: "olive.probe@example.com",
+      },
+      {
+        firstName: "Olive",
+        lastName: "Probe",
+        email: "fallback@example.com",
+      }
+    );
+    assert.equal(mapped.confirmationCode, "HCP-TEST99");
+    assert.equal(mapped.guest.email, "olive.probe@example.com");
+    assert.equal(mapped.nights, 3);
+    assert.equal(mapped.total, "450.0000");
+  });
+});
